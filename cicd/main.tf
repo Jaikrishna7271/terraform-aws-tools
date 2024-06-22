@@ -42,7 +42,7 @@ module "nexus" {
 
   name = "nexus"
 
-  instance_type          = "t3.small"
+  instance_type          = "t3.medium"
   vpc_security_group_ids = ["sg-0a7f25def76c5aa35"]
   # convert StringList to list and get first element
   subnet_id = "subnet-04e9ac8cfc6f98d81"
