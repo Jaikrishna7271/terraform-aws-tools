@@ -28,16 +28,32 @@ module "jenkins_agent" {
     Name = "jenkins-agent"
   }
 }
+
+resource "aws_key_pair" "tools" {
+  key_name   = "tools"
+  # you can paste the public key directly like this
+  #public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL6ONJth+DzeXbU3oGATxjVmoRjPepdl7sBuPzzQT2Nc sivak@BOOK-I6CR3LQ85Q"
+  public_key = file("~/.ssh/tools.pub")
+  # ~ means windows home directory
+}
+
 module "nexus" {
   source  = "terraform-aws-modules/ec2-instance/aws"
 
   name = "nexus"
 
-  instance_type          = "t3.medium"
+  instance_type          = "t3.small"
   vpc_security_group_ids = ["sg-0a7f25def76c5aa35"]
   # convert StringList to list and get first element
   subnet_id = "subnet-04e9ac8cfc6f98d81"
   ami = data.aws_ami.nexus_ami_info.id
+  key_name = aws_key_pair.tools.key_name
+  root_block_device = [
+    {
+      volume_type = "gp3"
+      volume_size = 30
+    }
+  ]
   tags = {
     Name = "nexus"
   }
